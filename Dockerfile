@@ -5,7 +5,7 @@ FROM maven:3.8.5-openjdk-17 AS build
 WORKDIR /app
 
 # Copy the entire project structure
-COPY . .
+# COPY . .
 
 # Use the official OpenJDK image to run the application
 FROM openjdk:17-jdk-slim
