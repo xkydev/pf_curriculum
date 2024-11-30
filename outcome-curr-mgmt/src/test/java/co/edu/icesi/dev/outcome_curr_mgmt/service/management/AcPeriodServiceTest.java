@@ -8,6 +8,7 @@ import co.edu.icesi.dev.outcome_curr_mgmt.model.entity.management.AcPeriod;
 import co.edu.icesi.dev.outcome_curr_mgmt.persistence.management.AcPeriodRepository;
 import co.edu.icesi.dev.outcome_curr_mgmt.service.audit.ChangeLogServiceImpl;
 import co.edu.icesi.dev.outcome_curr_mgmt.util.OutcomeCurrMgmtUtil;
+import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -50,11 +51,14 @@ class AcPeriodServiceTest {
     @Mock
     ChangeLogServiceImpl changeLogService;
 
+    @Mock
+    MeterRegistry meterRegistry;
+
     Validator validator;
 
     @BeforeEach
     void setup(){
-        acPeriodService = new AcPeriodServiceImpl(acPeriodRepository, academicPeriodMapper, changeLogService);
+        acPeriodService = new AcPeriodServiceImpl(acPeriodRepository, academicPeriodMapper, changeLogService, meterRegistry);
         validator = Validation.buildDefaultValidatorFactory().getValidator();
     }
 
