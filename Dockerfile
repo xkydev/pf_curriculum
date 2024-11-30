@@ -7,9 +7,6 @@ WORKDIR /app
 # Copy the entire project structure
 COPY . .
 
-# Package the application
-RUN mvn clean package -DskipTests
-
 # Use the official OpenJDK image to run the application
 FROM openjdk:17-jdk-slim
 
