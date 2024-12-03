@@ -1,5 +1,9 @@
 pipeline {
     agent any
+
+    tools {
+        maven 'local_mvn'
+    }
     
     environment {
         DOCKER_IMAGE = "curriculum-app:latest"
