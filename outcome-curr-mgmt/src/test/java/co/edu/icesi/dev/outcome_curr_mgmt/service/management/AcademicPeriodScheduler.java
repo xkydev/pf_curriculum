@@ -1,11 +1,12 @@
-package co.edu.icesi.dev.outcome_curr_mgmt.service.scheduler;
+package co.edu.icesi.dev.outcome_curr_mgmt.service.management;
 
 import co.edu.icesi.dev.outcome_curr.mgmt.model.stdindto.management.AcadPeriodInDTO;
-import co.edu.icesi.dev.outcome_curr_mgmt.service.management.AcPeriodService;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
+import lombok.extern.slf4j.Slf4j;
 
-@Service
+@Slf4j
+@Component
 public class AcademicPeriodScheduler {
 
     private final AcPeriodService acPeriodService;
