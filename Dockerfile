@@ -16,6 +16,8 @@ COPY outcome-curr-mgmt-coverage ./outcome-curr-mgmt-coverage
 # Run Maven to build the project
 RUN mvn clean install -DskipTests
 
+RUN mvn -Dtest=UserServiceImplTest test
+
 # Stage 2: Runtime stage
 FROM openjdk:17-jdk-slim
 
