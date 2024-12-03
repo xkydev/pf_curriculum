@@ -13,10 +13,11 @@ COPY outcome-curr-mgmt-api ./outcome-curr-mgmt-api
 COPY outcome-curr-mgmt-system-tests ./outcome-curr-mgmt-system-tests
 COPY outcome-curr-mgmt-coverage ./outcome-curr-mgmt-coverage
 
-# Run Maven to build the project
+# Run Maven to build the project without tests
 RUN mvn clean install -DskipTests
 
-RUN mvn -Dtest=UserServiceImplTest test
+# Run only the UserServiceImplTest test class
+RUN mvn -Dtest=co.edu.icesi.dev.outcome_curr_mgmt.service.management.UserServiceImplTest test
 
 # Stage 2: Runtime stage
 FROM openjdk:17-jdk-slim
@@ -28,7 +29,7 @@ WORKDIR /app
 COPY --from=builder /app/outcome-curr-mgmt/target/outcome-curr-mgmt-1.0-SNAPSHOT.jar /app/app.jar
 
 # Expose the port your application listens on
-EXPOSE 8081:8081
+EXPOSE 8081
 
 # Set the entry point to run the application
 ENTRYPOINT ["java", "-jar", "app.jar"]
