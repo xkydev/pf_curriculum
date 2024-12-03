@@ -1,35 +1,25 @@
-# Stage 1: Build stage
-FROM maven:3.8.5-openjdk-17 AS builder
+FROM maven:3.8.5-openjdk-17 AS build
 
-# Set working directory
+# Set the working directory
 WORKDIR /app
 
-# Copy the parent POM file
-COPY pom.xml ./
+# Copy the entire project structure
+COPY . .
 
-# Copy all module-specific directories (assumes all modules are in the same directory as the parent pom.xml)
-COPY outcome-curr-mgmt ./outcome-curr-mgmt
-COPY outcome-curr-mgmt-api ./outcome-curr-mgmt-api
-COPY outcome-curr-mgmt-system-tests ./outcome-curr-mgmt-system-tests
-COPY outcome-curr-mgmt-coverage ./outcome-curr-mgmt-coverage
+# Package the application
+RUN mvn clean package -DskipTests
 
-# Run Maven to build the project without tests
-RUN mvn clean install -DskipTests
-
-# Run only the UserServiceImplTest test class
-RUN mvn -Dtest=co.edu.icesi.dev.outcome_curr_mgmt.service.management.UserServiceImplTest test
-
-# Stage 2: Runtime stage
+# Use the official OpenJDK image to run the application
 FROM openjdk:17-jdk-slim
 
-# Set working directory
+# Set the working directory
 WORKDIR /app
 
-# Copy the built jar from the builder stage
-COPY --from=builder /app/outcome-curr-mgmt/target/outcome-curr-mgmt-1.0-SNAPSHOT.jar /app/app.jar
+# Copy the jar file from the build stage
+COPY --from=build /app/outcome-curr-mgmt/target/*.jar app.jar
 
-# Expose the port your application listens on
+# Expose the port the application runs on
 EXPOSE 8081
 
-# Set the entry point to run the application
+# Run the application
 ENTRYPOINT ["java", "-jar", "app.jar"]
