@@ -9,10 +9,10 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <modules>
-        <module>outcome-curr-mgmt-api</module>
         <module>outcome-curr-mgmt</module>
-        <module>outcome-curr-mgmt-system-tests</module>
+        <module>outcome-curr-mgmt-api</module>
         <module>outcome-curr-mgmt-coverage</module>
+        <module>outcome-curr-mgmt-system-tests</module>
     </modules>
     <properties>
         <jacoco-maven-plugin.version>0.8.11</jacoco-maven-plugin.version>
