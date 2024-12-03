@@ -1,69 +1,76 @@
 pipeline {
-    agent any
+  agent any
 
-    environment {
-        DOCKER_IMAGE = "curriculum-app:latest"
-        CONTAINER_NAME = "curriculum-app"
-        DOCKER_PORT = "8081"
-        HOST_PORT = "8081"
-        TEST_CLASSES = 'co.edu.icesi.dev.outcome_curr_mgmt.service.management.UserServiceImplTest'
+  environment {
+    DOCKER_IMAGE = "curriculum-app:latest"
+    CONTAINER_NAME = "curriculum-app"
+    DOCKER_PORT = "8081"
+    HOST_PORT = "8081"
+    GIT_REPO = "https://github.com/xkydev/pf_curriculum.git"
+    GIT_CREDENTIALS_ID = 'github'
+  }
+
+  stages {
+    stage('Clean Workspace') {
+      steps {
+        deleteDir()
+      }
     }
-    
-    stages {
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
-        stage('Compile') {
-            steps {
-                sh 'mvn clean compile'
-            }
-        }
-        stage('Run Specific Tests') {
-            steps {
-                script {
-                    dir('outcome-curr-mgmt'){
-                        sh "mvn -Dtest=${TEST_CLASSES} test"
-                    }
-                }
-            }
-        }
-        stage('Build Docker Image') {
-            steps {
-                sh 'docker build -t ${DOCKER_IMAGE} .'
-            }
-        }
-         stage('Run Multiple Docker Containers in Parallel') {
-            parallel {
-                stage('Run Instance 1') {
-                    steps {
-                        sh '''
-                        docker stop ${CONTAINER_NAME}_1 || true
-                        docker rm ${CONTAINER_NAME}_1 || true
-                        docker run -d --name ${CONTAINER_NAME}_1 -p 8081:8081 -v /var/log/curriculum-app:/logs ${DOCKER_IMAGE}
-                        '''
-                    }
-                }
-                stage('Run Instance 2') {
-                    steps {
-                        sh '''
-                        docker stop ${CONTAINER_NAME}_2 || true
-                        docker rm ${CONTAINER_NAME}_2 || true
-                        docker run -d --name ${CONTAINER_NAME}_2 -p 8082:8081 -v /var/log/curriculum-app:/logs ${DOCKER_IMAGE}
-                        '''
-                    }
-                }
-                stage('Run Instance 3') {
-                    steps {
-                        sh '''
-                        docker stop ${CONTAINER_NAME}_3 || true
-                        docker rm ${CONTAINER_NAME}_3 || true
-                        docker run -d --name ${CONTAINER_NAME}_3 -p 8083:8081 -v /var/log/curriculum-app:/logs ${DOCKER_IMAGE}
-                        '''
-                    }
-                }
-            }
-        }
+      
+    stage('Checkout') {
+      steps {
+        checkout([$class: 'GitSCM',
+                  branches: [[name: '*/main']],
+                  userRemoteConfigs: [[
+                      url: env.GIT_REPO,
+                      credentialsId: env.GIT_CREDENTIALS_ID
+                  ]]
+        ])
+      }
     }
+
+    stage('Build Docker Image') {
+      steps {
+        sh 'docker build -t ${DOCKER_IMAGE} .'
+      }
+    }
+
+    stage('Run Multiple Docker Containers in Parallel') {
+          parallel {
+              stage('Run Instance 1') {
+                  steps {
+                      sh '''
+                      docker stop ${CONTAINER_NAME}_1 || true
+                      docker rm ${CONTAINER_NAME}_1 || true
+                      docker run -d --name ${CONTAINER_NAME}_1 -p 8081:8081 -v /var/log/curriculum-app:/logs ${DOCKER_IMAGE}
+                      '''
+                  }
+              }
+              stage('Run Instance 2') {
+                  steps {
+                      sh '''
+                      docker stop ${CONTAINER_NAME}_2 || true
+                      docker rm ${CONTAINER_NAME}_2 || true
+                      docker run -d --name ${CONTAINER_NAME}_2 -p 8082:8081 -v /var/log/curriculum-app:/logs ${DOCKER_IMAGE}
+                      '''
+                  }
+              }
+              stage('Run Instance 3') {
+                  steps {
+                      sh '''
+                      docker stop ${CONTAINER_NAME}_3 || true
+                      docker rm ${CONTAINER_NAME}_3 || true
+                      docker run -d --name ${CONTAINER_NAME}_3 -p 8083:8081 -v /var/log/curriculum-app:/logs ${DOCKER_IMAGE}
+                      '''
+                  }
+              }
+          }
+      }
+  }
+
+  post {
+    always {
+      echo 'Pipeline Completed!'
+    }
+  }
 }
