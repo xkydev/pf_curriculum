@@ -10,6 +10,7 @@ import co.edu.icesi.dev.outcome_curr_mgmt.model.entity.management.User;
 import co.edu.icesi.dev.outcome_curr_mgmt.persistence.management.UserRepository;
 import co.edu.icesi.dev.outcome_curr_mgmt.saamfi.delegate.SaamfiClient;
 import co.edu.icesi.dev.outcome_curr_mgmt.saamfi.util.SaamfiJwtTools;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;
 
+@SpringBootTest
 class UserServiceImplTest {
 
     @InjectMocks
